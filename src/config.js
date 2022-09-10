@@ -1,8 +1,8 @@
 // import kubernetes client
-import * as k8s from '@kubernetes/client-node';
-import { applyAppTemplate } from './config'
-import * as yaml from 'js-yaml';
-import * as fs from 'fs';
+const k8s = require("@kubernetes/client-node")
+const { applyAppTemplate } = require("./config")
+const yaml =  require("js-yaml")
+const fs = require("fs")
 const path = require("path")
 require('dotenv').config()
 
