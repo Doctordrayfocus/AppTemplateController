@@ -34,7 +34,7 @@ const initiateInformer = () => {
 		console.log(`Deleted: ${obj.metadata.name}`);
 	});
 	informer.on('error', (err) => {
-		console.error(err);
+		console.error('failed');
 		// Restart informer after 5sec
 		setTimeout(() => {
 			informer.start();
