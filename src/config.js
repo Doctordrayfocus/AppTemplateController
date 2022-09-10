@@ -127,7 +127,7 @@ const applyAppTemplate = async(templateConfig) => {
         return configData.type != 'namespace'
     })
 
-    otherConfig.forEach((configData) => {
+    otherConfig.forEach( async(configData) => {
 		await applyConfiguration(configData.content)
     })
 }
