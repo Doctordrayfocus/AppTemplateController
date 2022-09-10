@@ -133,6 +133,6 @@ const applyAppTemplate = (templateConfig) => {
     })
 }
 
-export {
+module.exports = {
     applyAppTemplate
 }

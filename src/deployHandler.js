@@ -44,7 +44,7 @@ const initiateInformer = () => {
 	informer.start();
 }
 
-export default {
+module.exports = {
 	initiateInformer
 }
 
