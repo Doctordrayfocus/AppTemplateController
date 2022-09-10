@@ -11,7 +11,7 @@ kc.loadFromDefault();
 
 const k8sCustomApi = kc.makeApiClient(k8s.CustomObjectsApi);
 
-const listAppTemplates = k8sCustomApi.listClusterCustomObject(
+const listAppTemplates = () => k8sCustomApi.listClusterCustomObject(
 	process.env.RESOURCE_GROUP,
 	process.env.API_VERSION,
 	process.env.RESOURCE_NAME
