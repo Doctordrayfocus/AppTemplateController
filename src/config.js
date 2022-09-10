@@ -70,7 +70,7 @@ const generateConfig = async (templateConfig) => {
 
 // Apply configurations using K8s core api
 
-const applyConfiguration = (yamlString) => {
+const applyConfiguration = async(yamlString) => {
   const client = k8s.KubernetesObjectApi.makeApiClient(kc);
   const specs = yaml.loadAll(yamlString);
   const validSpecs = specs.filter((s) => s && s.kind && s.metadata);
@@ -105,7 +105,7 @@ const applyConfiguration = (yamlString) => {
 
 const enviromentData = process.env;
 
-const applyAppTemplate = (templateConfig) => {
+const applyAppTemplate = async(templateConfig) => {
 
 	const templateAndEnvironmentData = {...templateConfig, ...enviromentData};
     const getConfigs = async () => {
@@ -120,7 +120,7 @@ const applyAppTemplate = (templateConfig) => {
         return configData.type == 'namespace'
     })
 
-    applyConfiguration(namespaceConfig[0].content)
+   await applyConfiguration(namespaceConfig[0].content)
 
     // apply other configurations
 
@@ -129,7 +129,7 @@ const applyAppTemplate = (templateConfig) => {
     })
 
     otherConfig.forEach((configData) => {
-        applyConfiguration(configData.content)
+		await applyConfiguration(configData.content)
     })
 }
 

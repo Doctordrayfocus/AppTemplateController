@@ -22,13 +22,13 @@ const listAppTemplates = k8sCustomApi.listClusterCustomObject(
 const initiateInformer = () => {
 	const informer = k8s.makeInformer(kc, `/apis/${process.env.RESOURCE_GROUP}/${process.env.API_VERSION}/namespaces/*/${process.env.RESOURCE_NAME}`, listAppTemplates);
 
-	informer.on('add', (obj) => {
+	informer.on('add', async(obj) => {
 		console.log(`Added: ${obj.metadata.name}`);
-		applyAppTemplate(obj.spec)
+		await applyAppTemplate(obj.spec)
 	});
-	informer.on('update', (obj) => {
+	informer.on('update', async(obj) => {
 		console.log(`Updated: ${obj.metadata.name}`);
-		applyAppTemplate(obj.spec)
+		await applyAppTemplate(obj.spec)
 	});
 	informer.on('delete', (obj) => {
 		console.log(`Deleted: ${obj.metadata.name}`);
