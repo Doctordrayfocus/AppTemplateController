@@ -1,6 +1,5 @@
 // import kubernetes client
 const k8s = require("@kubernetes/client-node")
-const { applyAppTemplate } = require("./config")
 const yaml =  require("js-yaml")
 const fs = require("fs")
 const path = require("path")
