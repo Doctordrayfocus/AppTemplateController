@@ -20,50 +20,56 @@ const replaceAll = function (mainString, find, replace) {
   );
 };
 
-const allConfigs = [];
+
 
 const generateConfig = async (templateConfig) => {
-  const readFolderFiles = () => {
-    return new Promise((resolve) => {
-      fs.readdir(path.join(__dirname, "../configs"), (err, files) => {
-        resolve(files);
+  const allConfigs = [];
+  
+  return new Promise(async(resolve) => {
+    const readFolderFiles = () => {
+      return new Promise((resolve) => {
+        fs.readdir(path.join(__dirname, "../configs"), (err, files) => {
+          resolve(files);
+        });
       });
-    });
-  };
-
-  const files = await readFolderFiles();
-
-  const readAndMakeTemplate = (file) => {
-    return new Promise(() => {
-      fs.readFile(
-        path.join(__dirname, `../configs/${file}`),
-        { encoding: "utf-8" },
-        function (err, data) {
-          if (!err) {
-            let stringValue = `${data}`;
-            for (const key in templateConfig) {
-              if (templateConfig.hasOwnProperty(key)) {
-                const value = templateConfig[key];
-                stringValue = replaceAll(stringValue, "${" + key + "}", value);
+    };
+  
+    const files = await readFolderFiles();
+  
+    const readAndMakeTemplate = (file) => {
+      return new Promise(() => {
+        fs.readFile(
+          path.join(__dirname, `../configs/${file}`),
+          { encoding: "utf-8" },
+          function (err, data) {
+            if (!err) {
+              let stringValue = `${data}`;
+              for (const key in templateConfig) {
+                if (templateConfig.hasOwnProperty(key)) {
+                  const value = templateConfig[key];
+                  stringValue = replaceAll(stringValue, "${" + key + "}", value);
+                }
               }
+  
+              const configType = file.split(".")[0].toLocaleLowerCase();
+              allConfigs.push({
+                type: configType,
+                content: stringValue
+              });
+            } else {
+              console.log(err);
             }
-
-            const configType = file.split(".")[0].toLocaleLowerCase();
-            allConfigs.push({
-              type: configType,
-              content: stringValue
-            });
-          } else {
-            console.log(err);
           }
-        }
-      );
+        );
+      });
+    };
+  
+    files.forEach(async (file) => {
+      await readAndMakeTemplate(file);
     });
-  };
 
-  files.forEach(async (file) => {
-    await readAndMakeTemplate(file);
-  });
+    resolve(allConfigs);
+  })
 };
 
 
@@ -107,18 +113,17 @@ const enviromentData = process.env;
 const applyAppTemplate = async (templateConfig) => {
 
   const templateAndEnvironmentData = { ...templateConfig, ...enviromentData };
-  const getConfigs = async () => {
-    await generateConfig(templateAndEnvironmentData);
-  };
 
-  await getConfigs();
+  console.log(templateAndEnvironmentData)
 
-  console.log(allConfigs)
+  const processedConfigs = await generateConfig(templateAndEnvironmentData);
 
-  if (allConfigs.length > 0) {
+  console.log(processedConfigs)
+
+  if (processedConfigs.length > 0) {
     // apply namespace first
 
-    const namespaceConfig = allConfigs.filter((configData) => {
+    const namespaceConfig = processedConfigs.filter((configData) => {
       return configData.type == 'namespace'
     })
 
@@ -126,7 +131,7 @@ const applyAppTemplate = async (templateConfig) => {
 
     // apply other configurations
 
-    const otherConfig = allConfigs.filter((configData) => {
+    const otherConfig = processedConfigs.filter((configData) => {
       return configData.type != 'namespace'
     })
 
