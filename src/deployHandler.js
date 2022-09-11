@@ -11,11 +11,19 @@ kc.loadFromDefault();
 
 const k8sCustomApi = kc.makeApiClient(k8s.CustomObjectsApi);
 
-const listAppTemplates = () => k8sCustomApi.listClusterCustomObject(
+const listAppTemplates = () => k8sCustomApi.listNamespacedCustomObject(
 	process.env.RESOURCE_GROUP,
 	process.env.API_VERSION,
 	process.env.RESOURCE_NAME
 )
+
+const fetchTemplates = () => {
+	listAppTemplates().then((response, obj) => {
+
+		console.log(response)
+		console.log(obj)
+	})
+}
 
 
 // Create and run an informer to listen for custom app template resources
@@ -48,44 +56,46 @@ const initiateInformer = () => {
 
 	// informer.start();
 
-	const watch = new k8s.Watch(kc);
-	watch.watch(`/apis/${process.env.RESOURCE_GROUP}/${process.env.API_VERSION}/namespaces/*/${process.env.RESOURCE_NAME}`,
-		// optional query parameters can go here.
-		{
+	fetchTemplates()
 
-		},
-		// callback is called for each received object.
-		(type, apiObj, watchObj) => {
-			if (type === 'ADDED') {
-				console.log('new object:');
-				applyAppTemplate(watchObj.spec).then(() => {
-					console.log("template applied")
-				})
-			} else if (type === 'MODIFIED') {
-				console.log('changed object:');
-				applyAppTemplate(watchObj.spec).then(() => {
-					console.log("template applied")
-				})
-			} else if (type === 'DELETED') {
+	// const watch = new k8s.Watch(kc);
+	// watch.watch(`/apis/${process.env.RESOURCE_GROUP}/${process.env.API_VERSION}/namespaces/*/${process.env.RESOURCE_NAME}`,
+	// 	// optional query parameters can go here.
+	// 	{
 
-				console.log('deleted object:');
-			} else if (type === 'BOOKMARK') {
+	// 	},
+	// 	// callback is called for each received object.
+	// 	(type, apiObj, watchObj) => {
+	// 		if (type === 'ADDED') {
+	// 			console.log('new object:');
+	// 			applyAppTemplate(watchObj.spec).then(() => {
+	// 				console.log("template applied")
+	// 			})
+	// 		} else if (type === 'MODIFIED') {
+	// 			console.log('changed object:');
+	// 			applyAppTemplate(watchObj.spec).then(() => {
+	// 				console.log("template applied")
+	// 			})
+	// 		} else if (type === 'DELETED') {
 
-				console.log(`bookmark: ${watchObj.metadata.resourceVersion}`);
-			} else {
+	// 			console.log('deleted object:');
+	// 		} else if (type === 'BOOKMARK') {
 
-				console.log('unknown type: ' + type);
-			}
-			console.log(apiObj);
-		},
-		// done callback is called if the watch terminates normally
-		(err) => {
-			console.log(err);
-		})
-		.then((req) => {
-			// watch returns a request object which you can use to abort the watch.
-			setTimeout(() => { req.abort(); }, 10 * 1000);
-		});
+	// 			console.log(`bookmark: ${watchObj.metadata.resourceVersion}`);
+	// 		} else {
+
+	// 			console.log('unknown type: ' + type);
+	// 		}
+	// 		console.log(apiObj);
+	// 	},
+	// 	// done callback is called if the watch terminates normally
+	// 	(err) => {
+	// 		console.log(err);
+	// 	})
+	// 	.then((req) => {
+	// 		// watch returns a request object which you can use to abort the watch.
+	// 		setTimeout(() => { req.abort(); }, 10 * 1000);
+	// 	});
 }
 
 module.exports = {
