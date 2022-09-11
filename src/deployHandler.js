@@ -14,6 +14,7 @@ const k8sCustomApi = kc.makeApiClient(k8s.CustomObjectsApi);
 const listAppTemplates = () => k8sCustomApi.listNamespacedCustomObject(
 	process.env.RESOURCE_GROUP,
 	process.env.API_VERSION,
+	"*",
 	process.env.RESOURCE_NAME
 )
 
