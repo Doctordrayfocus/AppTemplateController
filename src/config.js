@@ -63,12 +63,12 @@ const generateConfig = async (templateConfig) => {
         );
       });
     };
+
+    console.log(files)
   
     files.forEach(async (file) => {
       await readAndMakeTemplate(file);
     });
-
-    console.log(allConfigs)
 
     resolve(allConfigs);
   })
