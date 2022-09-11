@@ -21,7 +21,7 @@ const listAppTemplates = () => k8sCustomApi.listNamespacedCustomObject(
 const fetchTemplates = () => {
 	listAppTemplates().then((response, obj) => {
 
-		console.log(response)
+		console.log(response.status)
 		console.log(obj)
 	})
 }
