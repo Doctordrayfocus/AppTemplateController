@@ -68,6 +68,8 @@ const generateConfig = async (templateConfig) => {
       await readAndMakeTemplate(file);
     });
 
+    console.log(allConfigs)
+
     resolve(allConfigs);
   })
 };
