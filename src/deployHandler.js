@@ -17,24 +17,29 @@ const listAppTemplates = () => k8sCustomApi.listClusterCustomObject(
 	process.env.RESOURCE_NAME
 )
 
+
 // Create and run an informer to listen for custom app template resources
 
 const initiateInformer = () => {
 	const informer = k8s.makeInformer(kc, `/apis/${process.env.RESOURCE_GROUP}/${process.env.API_VERSION}/namespaces/*/${process.env.RESOURCE_NAME}`, listAppTemplates);
 
-	informer.on('add', async(obj) => {
+	informer.on('add', (obj) => {
 		console.log(`Added: ${obj.metadata.name}`);
-		await applyAppTemplate(obj.spec)
+		applyAppTemplate(obj.spec).then(() => {
+			console.log("template applied")
+		})
 	});
-	informer.on('update', async(obj) => {
+	informer.on('update', (obj) => {
 		console.log(`Updated: ${obj.metadata.name}`);
-		await applyAppTemplate(obj.spec)
+		applyAppTemplate(obj.spec).then(() => {
+			console.log("template update applied")
+		})
 	});
 	informer.on('delete', (obj) => {
 		console.log(`Deleted: ${obj.metadata.name}`);
 	});
 	informer.on('error', (err) => {
-		console.error('failed');
+		console.error(err);
 		// Restart informer after 5sec
 		setTimeout(() => {
 			informer.start();
