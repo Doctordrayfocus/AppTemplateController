@@ -24,11 +24,11 @@ const replaceAll = function (mainString, find, replace) {
 
 const generateConfig = async (templateConfig) => {
   const allConfigs = [];
-  
+
   return new Promise(async(resolve) => {
     const readFolderFiles = () => {
       return new Promise((resolve) => {
-        fs.readdir(path.join(__dirname, "../configs"), (err, files) => {
+        fs.readdir(path.join(__dirname, "./configs"), (err, files) => {
           resolve(files);
         });
       });
@@ -39,7 +39,7 @@ const generateConfig = async (templateConfig) => {
     const readAndMakeTemplate = (file) => {
       return new Promise(() => {
         fs.readFile(
-          path.join(__dirname, `../configs/${file}`),
+          path.join(__dirname, `./configs/${file}`),
           { encoding: "utf-8" },
           function (err, data) {
             if (!err) {
