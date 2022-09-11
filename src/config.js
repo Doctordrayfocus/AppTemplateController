@@ -20,26 +20,24 @@ const replaceAll = function (mainString, find, replace) {
   );
 };
 
-
-
 const generateConfig = async (templateConfig) => {
   const allConfigs = [];
 
-  return new Promise(async(resolve) => {
+  return new Promise(async (resolveMain) => {
     const readFolderFiles = () => {
       return new Promise((resolve) => {
-        fs.readdir(path.join(__dirname, "./configs"), (err, files) => {
+        fs.readdir(path.join(__dirname, "../configs"), (err, files) => {
           resolve(files);
         });
       });
     };
-  
+
     const files = await readFolderFiles();
-  
+
     const readAndMakeTemplate = (file) => {
-      return new Promise(() => {
+      return new Promise((resolve) => {
         fs.readFile(
-          path.join(__dirname, `./configs/${file}`),
+          path.join(__dirname, `../configs/${file}`),
           { encoding: "utf-8" },
           function (err, data) {
             if (!err) {
@@ -50,27 +48,41 @@ const generateConfig = async (templateConfig) => {
                   stringValue = replaceAll(stringValue, "${" + key + "}", value);
                 }
               }
-  
               const configType = file.split(".")[0].toLocaleLowerCase();
-              allConfigs.push({
+
+              resolve({
                 type: configType,
                 content: stringValue
-              });
+              })
+
             } else {
               console.log(err);
+              resolve(null)
             }
           }
         );
       });
     };
 
-    console.log(files)
-  
-    files.forEach(async (file) => {
-      await readAndMakeTemplate(file);
-    });
+    const configForAllFiles = async () => {
+      const allPromises = []
+      files.forEach(async (file) => {
+        allPromises.push(
+          readAndMakeTemplate(file).then((fileConfig) => {
+            if (fileConfig) {
+              allConfigs.push(fileConfig)
+            }
+          })
+          .catch((err) => {
+            console.log(err); 
+          })
+        )
+      })
+      await Promise.all(allPromises)
+      resolveMain(allConfigs)
+    }
 
-    resolve(allConfigs);
+    await configForAllFiles();
   })
 };
 
@@ -116,11 +128,7 @@ const applyAppTemplate = async (templateConfig) => {
 
   const templateAndEnvironmentData = { ...templateConfig, ...enviromentData };
 
-  console.log(templateAndEnvironmentData)
-
   const processedConfigs = await generateConfig(templateAndEnvironmentData);
-
-  console.log(processedConfigs)
 
   if (processedConfigs.length > 0) {
     // apply namespace first
