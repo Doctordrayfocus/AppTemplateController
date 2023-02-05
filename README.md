@@ -62,7 +62,7 @@ spec:
     - apptemp
 ```
 
-You can used the custom resource like this,
+You can use the custom resource like this,
 
 ```yml
 apiVersion: "myapp.domain.com/v1"
