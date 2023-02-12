@@ -33,7 +33,10 @@ const generateConfig = async (templateConfigurations) => {
 	}
 
 	// extract templateVariables
-	const templateVariables = JSON.parse(templateConfigurations.templateVariables)
+	let templateVariables = {}
+	if (templateConfigurations.hasOwnProperty("templateVariables")) {
+		templateVariables = JSON.parse(templateConfigurations.templateVariables)
+	}
 	const templateConfig = { ...templateConfigurations, ...templateVariables}
 
 	return new Promise(async (resolveMain) => {
