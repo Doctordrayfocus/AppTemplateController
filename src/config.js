@@ -20,17 +20,21 @@ const replaceAll = function (mainString, find, replace) {
 	);
 };
 
-const generateConfig = async (templateConfig) => {
+const generateConfig = async (templateConfigurations) => {
 	const allConfigs = [];
 
 	let configsToUse = [];
 
-	if (templateConfig.hasOwnProperty("configsToUse")) {
-		configsToUse = templateConfig.configsToUse.split(",")
+	if (templateConfigurations.hasOwnProperty("configsToUse")) {
+		configsToUse = templateConfigurations.configsToUse.split(",")
 		console.log({
 			configsToUse
 		})
 	}
+
+	// extract templateVariables
+	const templateVariables = JSON.parse(templateConfigurations.templateVariables)
+	const templateConfig = { ...templateConfigurations, ...templateVariables}
 
 	return new Promise(async (resolveMain) => {
 
