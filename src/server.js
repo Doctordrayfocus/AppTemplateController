@@ -1,24 +1,24 @@
-'use strict';
+"use strict";
 
-const express = require('express');
-const { initiateInformer } = require("./deployHandler")
-const { syncRemoteConfigs } = require("./syncConfig")
+const express = require("express");
+const { initiateInformer } = require("./deployHandler");
+const { syncRemoteConfigs } = require("./syncConfig");
 
 // Constants
 const PORT = 8080;
-const HOST = '0.0.0.0';
+const HOST = "0.0.0.0";
 
 // App
 const app = express();
-app.get('/', (req, res) => {
-	res.send('Custom controller is running');
+app.get("/", (req, res) => {
+  res.send("Custom controller is running");
 });
 
 // synchronize remote configuration
-syncRemoteConfigs()
+syncRemoteConfigs();
 
 // initiate controller
-initiateInformer()
+initiateInformer();
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
